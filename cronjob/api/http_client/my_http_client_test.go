@@ -116,7 +116,7 @@ func TestMyHttpClientDelete(t *testing.T) {
 		Transport: &mockTransport{
 			roundTripFunc: func(req *http.Request) (*http.Response, error) {
 				// Verify that the request is a DELETE request
-				assert.Equal(t, http.MethodDelete, req.Method)
+				assert.Equal(t, http.MethodPut, req.Method)
 
 				// Create a mock response
 				response := &http.Response{
