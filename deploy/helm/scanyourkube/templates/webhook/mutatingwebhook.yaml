@@ -1,0 +1,26 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "keel-webhook.fullname" . }}
+  labels:
+    {{- include "keel-webhook.labels" . | nindent 4 }}
+  name: {{ include "keel-webhook.fullname" . }}
+webhooks:
+  - admissionReviewVersions: {{- required "webhook.admissionReviewVersions is required" .Values.scanyourkubewebhook.webhook.admissionReviewVersions | toYaml | nindent 6 }}
+    namespaceSelector:
+      {{- toYaml .Values.scanyourkubewebhook.webhook.namespaceSelector | nindent 6 }}
+    clientConfig:
+      service:
+        name: {{ include "keel-webhook.fullname" . }}
+        namespace: {{ .Release.Namespace }}
+        path: /mutate
+        port: 443
+    failurePolicy: {{ required "webhook.failurePolicy is required" .Values.scanyourkubewebhook.webhook.failurePolicy }}
+    reinvocationPolicy: {{ required "webhook.reinvocationPolicy is required" .Values.scanyourkubewebhook.webhook.reinvocationPolicy }}
+    sideEffects: {{ required "webhook.sideEffects is required" .Values.scanyourkubewebhook.webhook.sideEffects }}
+    matchPolicy: {{ required "webhook.matchPolicy is required" .Values.scanyourkubewebhook.webhook.matchPolicy }}
+    name: {{ required "webhook.name is required" .Values.scanyourkubewebhook.webhook.name }}
+    rules:
+      {{- toYaml .Values.scanyourkubewebhook.webhook.rules | nindent 6 }}
+  

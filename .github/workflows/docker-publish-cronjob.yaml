@@ -1,0 +1,47 @@
+name: Docker
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+on:
+  push:
+    # Publish semver tags as releases.
+    tags: [ '*.*.*' ]
+
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Helm OCI Chart Releaser
+        # You may pin to the exact commit or the version.
+        # uses: appany/helm-oci-chart-releaser@a517e1b617d0377cbca9073bd8b0f35daf83059c
+        uses: appany/helm-oci-chart-releaser@v0.4.0
+        with:
+          # Chart name
+          name: scanyourkube
+          # Chart repository name
+          repository: scanyourkube
+          # Chart version
+          tag: ${{  github.ref_name }}
+          # Chart path (Default 'charts/{name}')
+          path: deploy/helm/scanyourkube
+          # OCI registry
+          registry: ghcr.io
+          # OCI registry username
+          registry_username: ${{ docker.actor }}
+          # OCI registry password
+          registry_password: ${{ secrets.GHCR_TOKEN }}

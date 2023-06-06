@@ -1,0 +1,62 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "scanyourkube-job.fullname" . }}
+  labels:
+    {{- include "scanyourkube-job.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.scanyourkubejob.cronJob.schedule }}  
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          {{- with .Values.scanyourkubejob.podAnnotations }}
+          annotations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        spec:
+          {{- with .Values.scanyourkubejob.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          serviceAccountName: {{ include "scanyourkube-job.serviceAccountName" . }}
+          securityContext:
+            {{- toYaml .Values.scanyourkubejob.podSecurityContext | nindent 12 }}
+          containers:
+            - name: {{ .Chart.Name }}
+              securityContext:
+                {{- toYaml .Values.scanyourkubejob.securityContext | nindent 16 }}
+              image: "{{ .Values.scanyourkubejob.image.repository }}:{{ .Values.scanyourkubejob.image.tag | default .Chart.AppVersion }}"
+              imagePullPolicy: {{ .Values.scanyourkubejob.image.pullPolicy }}
+              env:
+              - name: KUBECLARITY_API_URL
+                value: "http://scanyourkube-scanyourkube-kubeclarity.{{ .Release.Namespace }}:8080"
+              - name: KEEL_WEBHOOK_URL
+                value: "http://scanyourkube-keel.{{ .Release.Namespace }}:8080"
+              - name: NAMESPACES_TO_IGNORE
+                value: {{ .Values.scanyourkubejob.env.NAMESPACES_TO_IGNORE | quote }}
+              - name: VULNERABILITIES_TO_IGNORE
+                value: {{ .Values.scanyourkubejob.env.VULNERABILITIES_TO_IGNORE | quote}}
+              - name: SENDER_EMAIL
+                value: {{ .Values.scanyourkubejob.env.SENDER_EMAIL | quote }}
+              - name: SMTP_SERVERADDRESS
+                value: {{ .Values.scanyourkubejob.env.SMTP_SERVERADDRESS | quote }}
+              - name: SMTP_SERVERPORT
+                value: {{ .Values.scanyourkubejob.env.SMTP_SERVERPORT | quote }}
+              - name: INSECURE_REGISTRY
+                value: "true"
+              resources:
+                {{- toYaml .Values.scanyourkubejob.resources | nindent 16 }}
+          restartPolicy: Never
+          {{- with .Values.scanyourkubejob.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.scanyourkubejob.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.scanyourkubejob.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}

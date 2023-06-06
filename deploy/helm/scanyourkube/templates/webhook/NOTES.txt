@@ -1,0 +1,1 @@
+Successfully installed the webhook for scanyourkube.
