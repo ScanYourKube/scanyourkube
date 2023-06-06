@@ -12,8 +12,9 @@ type MockKeelWebhookApi struct {
 	UpdateImageFunc func(dto update_keel.KeelWebhookDto) error
 }
 
-func (m *MockKeelWebhookApi) UpdateImage(dto update_keel.KeelWebhookDto) {
+func (m *MockKeelWebhookApi) UpdateImage(dto update_keel.KeelWebhookDto) error {
 	m.UpdateImageFunc(dto)
+	return nil
 }
 
 func TestNewKeelUpdateService(t *testing.T) {
