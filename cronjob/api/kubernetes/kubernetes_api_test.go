@@ -60,6 +60,57 @@ func TestKubernetesApi_GetPods(t *testing.T) {
 	assert.Equal(t, pods, result)
 }
 
+func TestKubernetesApiGetPodsByLabel(t *testing.T) {
+	pod := &v1.Pod{
+
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "DUMMY",
+			Namespace: "DUMMY",
+			Labels: map[string]string{
+				"scanyourkube.io/podName": "DUMMY",
+			},
+		},
+	}
+	clientset := fake.NewSimpleClientset(&v1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "DUMMY",
+			Namespace: "DUMMY",
+			Labels: map[string]string{
+				"scanyourkube.io/podName": "DUMMY",
+			},
+		},
+	})
+
+	api := KubernetesApi{
+		ClientSet: clientset,
+	}
+
+	result, err := api.GetPodByLabel("scanyourkube.io/podName", "DUMMY")
+	assert.Nil(t, err)
+	assert.NotNil(t, result)
+	assert.Equal(t, pod, result)
+}
+
+func TestKubernetesApiGetNoPodsByWrongLabel(t *testing.T) {
+	clientset := fake.NewSimpleClientset(&v1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "DUMMY",
+			Namespace: "DUMMY",
+			Labels: map[string]string{
+				"NAME": "VALUE",
+			},
+		},
+	})
+
+	api := KubernetesApi{
+		ClientSet: clientset,
+	}
+
+	result, err := api.GetPodByLabel("DUMMY", "DUMMY")
+	assert.Error(t, err)
+	assert.Nil(t, result)
+}
+
 func TestKubernetesApi_GetDeployments(t *testing.T) {
 	deployment := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
