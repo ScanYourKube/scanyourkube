@@ -1,0 +1,36 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Go CI CronJob
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: '1.20'
+        
+    - name: Build
+      run: cd cronjob && go build -v ./...
+
+    - name: Test
+      run: cd cronjob && go test $(go list ./... | grep -v 'testing') -coverprofile=coverage.out -json > test-report.out
+    
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      with:
+        projectBaseDir: cronjob
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

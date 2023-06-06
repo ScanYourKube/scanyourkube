@@ -1,0 +1,30 @@
+# syntax=docker/dockerfile:experimental
+# ---
+FROM golang:1.20 AS build
+
+ENV GOOS=linux
+ENV GOARCH=amd64
+ENV CGO_ENABLED=0
+ENV NAMESPACES_TO_IGNORE=kube-system
+ENV VULNERABILITIES_TO_IGNORE=
+ENV KUBECLARITY_API_URL=
+ENV KEEL_WEBHOOK_URL=
+
+WORKDIR /work
+COPY cronjob .
+
+
+RUN --mount=type=cache,target=/root/.cache/go-build,sharing=private \
+  go build -o bin/scanyourkube-cronjob .
+
+FROM alpine:latest AS create-utils
+RUN adduser -u 10001 scratchuser -D
+
+# ---
+FROM scratch AS run
+COPY --from=create-utils etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+COPY --from=build /work/bin/scanyourkube-cronjob /usr/local/bin/
+COPY --from=create-utils /etc/passwd /etc/passwd
+USER scratchuser
+CMD ["scanyourkube-cronjob"]
