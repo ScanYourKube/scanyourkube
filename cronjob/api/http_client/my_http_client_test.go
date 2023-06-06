@@ -1,14 +1,12 @@
-package http_client_test
+package http_client
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"http_client"
 )
 
 func TestMyHttpClientGet(t *testing.T) {
@@ -22,7 +20,7 @@ func TestMyHttpClientGet(t *testing.T) {
 				// Create a mock response
 				response := &http.Response{
 					StatusCode: http.StatusOK,
-					Body:       ioutil.NopCloser(bytes.NewBufferString("OK")),
+					Body:       io.NopCloser(bytes.NewBufferString("OK")),
 				}
 
 				return response, nil
@@ -31,7 +29,7 @@ func TestMyHttpClientGet(t *testing.T) {
 	}
 
 	// Create an instance of MyHttpClient using the mock client
-	client := http_client.NewMyHttpClient(mockClient)
+	client := NewMyHttpClient(mockClient)
 
 	// Perform the GET request
 	response, err := client.Get("http://example.com")
@@ -39,7 +37,7 @@ func TestMyHttpClientGet(t *testing.T) {
 	// Verify the response and error
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, response.StatusCode)
-	body, _ := ioutil.ReadAll(response.Body)
+	body, _ := io.ReadAll(response.Body)
 	assert.Equal(t, "OK", string(body))
 }
 
@@ -52,13 +50,13 @@ func TestMyHttpClientPost(t *testing.T) {
 				assert.Equal(t, http.MethodPost, req.Method)
 
 				// Verify the request body
-				body, _ := ioutil.ReadAll(req.Body)
+				body, _ := io.ReadAll(req.Body)
 				assert.Equal(t, []byte(`{"key":"value"}`), body)
 
 				// Create a mock response
 				response := &http.Response{
 					StatusCode: http.StatusOK,
-					Body:       ioutil.NopCloser(bytes.NewBufferString("OK")),
+					Body:       io.NopCloser(bytes.NewBufferString("OK")),
 				}
 
 				return response, nil
@@ -67,7 +65,7 @@ func TestMyHttpClientPost(t *testing.T) {
 	}
 
 	// Create an instance of MyHttpClient using the mock client
-	client := http_client.NewMyHttpClient(mockClient)
+	client := NewMyHttpClient(mockClient)
 
 	// Perform the POST request
 	err := client.Post("http://example.com", []byte(`{"key":"value"}`))
@@ -85,13 +83,13 @@ func TestMyHttpClientPut(t *testing.T) {
 				assert.Equal(t, http.MethodPut, req.Method)
 
 				// Verify the request body
-				body, _ := ioutil.ReadAll(req.Body)
+				body, _ := io.ReadAll(req.Body)
 				assert.Equal(t, []byte(`{"key":"value"}`), body)
 
 				// Create a mock response
 				response := &http.Response{
 					StatusCode: http.StatusOK,
-					Body:       ioutil.NopCloser(bytes.NewBufferString("OK")),
+					Body:       io.NopCloser(bytes.NewBufferString("OK")),
 				}
 
 				return response, nil
@@ -100,7 +98,7 @@ func TestMyHttpClientPut(t *testing.T) {
 	}
 
 	// Create an instance of MyHttpClient using the mock client
-	client := http_client.NewMyHttpClient(mockClient)
+	client := NewMyHttpClient(mockClient)
 
 	// Perform the PUT request
 	response, err := client.Put("http://example.com", []byte(`{"key":"value"}`))
@@ -108,7 +106,7 @@ func TestMyHttpClientPut(t *testing.T) {
 	// Verify the response and error
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, response.StatusCode)
-	body, _ := ioutil.ReadAll(response.Body)
+	body, _ := io.ReadAll(response.Body)
 	assert.Equal(t, "OK", string(body))
 }
 
@@ -123,7 +121,7 @@ func TestMyHttpClientDelete(t *testing.T) {
 				// Create a mock response
 				response := &http.Response{
 					StatusCode: http.StatusOK,
-					Body:       ioutil.NopCloser(bytes.NewBufferString("OK")),
+					Body:       io.NopCloser(bytes.NewBufferString("OK")),
 				}
 
 				return response, nil
@@ -132,7 +130,7 @@ func TestMyHttpClientDelete(t *testing.T) {
 	}
 
 	// Create an instance of MyHttpClient using the mock client
-	client := http_client.NewMyHttpClient(mockClient)
+	client := NewMyHttpClient(mockClient)
 
 	// Perform the DELETE request
 	err := client.Delete("http://example.com")
