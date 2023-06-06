@@ -11,15 +11,7 @@ ENV KUBECLARITY_API_URL=
 ENV KEEL_WEBHOOK_URL=
 
 WORKDIR /work
-COPY api /work/api
-COPY di /work/di
-COPY dto /work/dto
-COPY service /work/service
-COPY go.mod /work/go.mod
-COPY go.sum /work/go.sum
-COPY LICENSE /work/LICENSE
-COPY main.go /work/main.go
-COPY README.md /work/README.md
+COPY cronjob .
 
 
 RUN --mount=type=cache,target=/root/.cache/go-build,sharing=private \

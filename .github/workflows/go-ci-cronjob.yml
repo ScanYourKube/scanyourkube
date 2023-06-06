@@ -24,11 +24,14 @@ jobs:
         
     - name: Govulncheck Action
       uses: kmulvey/govulncheck-action@v1.1.2
+
+    - name: Change directory
+      run: cd cronjob
     - name: Build
-      run: go build -v ./cronjob/...
+      run: go build -v ./...
 
     - name: Test
-      run: go test $(go list ./cronjob/... | grep -v 'testing') -coverprofile=coverage.out -json > test-report.out
+      run: go test $(go list ./... | grep -v 'testing') -coverprofile=coverage.out -json > test-report.out
     
     - uses: sonarsource/sonarqube-scan-action@master
       env:
