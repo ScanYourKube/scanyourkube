@@ -9,7 +9,7 @@ import (
 )
 
 type MockKeelWebhookApi struct {
-	UpdateImageFunc func(dto update_keel.KeelWebhookDto)
+	UpdateImageFunc func(dto update_keel.KeelWebhookDto) error
 }
 
 func (m *MockKeelWebhookApi) UpdateImage(dto update_keel.KeelWebhookDto) {
@@ -46,7 +46,7 @@ func TestKeelUpdateServiceUpdate(t *testing.T) {
 	isUpdateImageCalled := false
 
 	// Set the UpdateImageFunc on the mock KeelWebhookApi
-	mockWebhookApi.UpdateImageFunc = func(dto update_keel.KeelWebhookDto) {
+	mockWebhookApi.UpdateImageFunc = func(dto update_keel.KeelWebhookDto) error {
 		// Verify that the UpdateImageFunc is called with the expected KeelWebhookDto
 		assert.Equal(t, update_keel.KeelWebhookDto{
 			Name: "my-app",
@@ -54,6 +54,7 @@ func TestKeelUpdateServiceUpdate(t *testing.T) {
 		}, dto)
 
 		isUpdateImageCalled = true
+		return nil
 	}
 
 	// Call the Update method
