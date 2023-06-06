@@ -3,7 +3,7 @@ package update_service
 import (
 	"testing"
 
-	update_keel "github.com/scanyourkube/cronjob/dto/service/update"
+	update_keel "github.com/scanyourkube/cronjob/dto/api/update"
 	registry_image "github.com/scanyourkube/cronjob/service/update/registryImage"
 	"github.com/stretchr/testify/assert"
 )
