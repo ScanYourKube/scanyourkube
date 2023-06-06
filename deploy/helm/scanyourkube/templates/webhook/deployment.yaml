@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "keel-webhook.fullname" . }}
+  labels:
+    {{- include "keel-webhook.labels" . | nindent 4 }}
+  {{- with .Values.scanyourkubewebhook.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if not .Values.scanyourkubewebhook.autoscaling.enabled }}
+  replicas: {{ .Values.scanyourkubewebhook.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "keel-webhook.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.scanyourkubewebhook.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "keel-webhook.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.scanyourkubewebhook.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "keel-webhook.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.scanyourkubewebhook.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.scanyourkubewebhook.securityContext | nindent 12 }}
+          image: "{{ .Values.scanyourkubewebhook.image.repository }}:{{ .Values.scanyourkubewebhook.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.scanyourkubewebhook.image.pullPolicy }}
+          ports:
+            - name: https
+              containerPort: {{ .Values.scanyourkubewebhook.service.port }}
+              protocol: TCP
+            - name: health
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+          resources:
+            {{- toYaml .Values.scanyourkubewebhook.resources | nindent 12 }}
+          volumeMounts:
+            - name: cert
+              mountPath: /etc/opt
+              readOnly: true
+      volumes:
+        - name: cert
+          secret:
+            secretName: {{ include "keel-webhook.fullname" . }}
+      {{- with .Values.scanyourkubewebhook.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.scanyourkubewebhook.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.scanyourkubewebhook.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

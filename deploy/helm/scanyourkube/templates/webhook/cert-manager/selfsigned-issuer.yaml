@@ -1,0 +1,6 @@
+apiVersion: cert-manager.io/v1
+kind: {{ .Values.scanyourkubewebhook.certificate.selfSignedIssuer.kind }}
+metadata:
+  name: {{ .Values.scanyourkubewebhook.certificate.selfSignedIssuer.name }}
+spec:
+  selfSigned: {}

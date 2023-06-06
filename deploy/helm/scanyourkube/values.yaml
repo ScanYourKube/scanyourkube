@@ -1,0 +1,286 @@
+# Default values for scanyourkube-job.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+
+scanyourkubejob:
+  env:
+    NAMESPACES_TO_IGNORE: "kube-system" # A comma-separated list of namespaces to ignore
+    VULNERABILITIES_TO_IGNORE: "" # A comma-separated list of vulernability names to ignore example CVE-2000-17
+    SENDER_EMAIL: "SENDER_EMAIL" 
+    SMTP_SERVERADDRESS: "SERVER_ADDRESS"
+    SMTP_SERVERPORT: "25"
+
+  image:
+    repository: ghcr.io/scanyourkube/scanyourkube-cronjob
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "1.0.0"
+
+  imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
+
+  cronJob:
+    schedule: "0 1 * * *"
+
+  clusterRole:
+    name: "getter"
+    rules:
+    - apiGroups: ["", "apps", "management.cattle.io"]
+      resources: ["pods", "namespaces", "replicasets", "deployments", "userattributes", "statefulsets"]
+      verbs: ["get", "list"]
+
+  clusterRoleBinding:
+    name: ""
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+  podAnnotations: {}
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+
+  resources:
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+scanyourkubewebhook:
+  replicaCount: 1
+  
+
+  image:
+    repository: ghcr.io/scanyourkube/scanyourkube-webhook
+    pullPolicy: Always
+    tag: "1.0.0"
+
+  imagePullSecrets: []
+  nameOverride: "admission-webhook"
+  fullnameOverride: ""
+
+  annotations:
+    keel.sh/policy: minor
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+  podAnnotations: {}
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  service:
+    type: ClusterIP
+    port: 443
+
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+  certificate:
+    rootCertificate:
+      name: scanyourkube-root-certificate
+      commonName: scanyourkube-root-certificate
+      secretName: scanyourkube-root-secret
+    selfSignedIssuer:
+      name: scanyourkube-selfsigned-issuer
+      kind: ClusterIssuer
+    clusterIssuer:
+      name: scanyourkube-ca-issuer
+      kind: Issuer
+
+  autoscaling:
+    enabled: false
+
+  webhook:
+    admissionReviewVersions: ["v1"]
+    failurePolicy: Fail
+    reinvocationPolicy: IfNeeded
+    sideEffects: None
+    matchPolicy: Equivalent
+    name: keel-webhook.zhaw.ch
+    rules:
+      - apiGroups: ["apps"]
+        apiVersions:
+        - v1
+        operations:
+        - CREATE
+        - UPDATE
+        resources:
+        - deployments
+        - statefulsets
+        scope: '*'
+
+
+
+scanyourkube-keel:
+  enabled: true
+  helmProvider:
+    enabled: true
+  service:
+    enabled: true
+    externalPort: 8080
+
+scanyourkube-kubeclarity:
+  enabled: true
+  
+
+#######################################################################################
+## KubeClarity Runtime Scan Value
+
+  ## Analyzer config.
+  analyzer:
+    ## Space seperated list of analyzers. (syft gomod)
+    analyzerList: "syft gomod trivy"
+
+    analyzerScope: "squashed"
+
+    trivy:
+      ## Enable trivy scanner, if true make sure to add it to analyzerList above
+      ##
+      enabled: true
+      timeout: "300"
+
+  ## Scanner config.
+  scanner:
+    ## Space seperated list of scanners. (grype dependency-track)
+    scannerList: "grype trivy"
+
+    grype:
+      ## Enable grype scanner, if true make sure to add it to scannerList above
+      ##
+      enabled: true
+      ## Grype scanner mode. (LOCAL, REMOTE)
+      mode: "REMOTE"
+
+      ## Remote grype scanner config.
+      remote-grype:
+        timeout: "2m"
+
+    dependency-track:
+      ## Enable dependency-track scanner, if true make sure to add it to scannerList above
+      ##
+      enabled: false
+      insecureSkipVerify: "true"
+      disableTls: "true"
+      apiserverAddress: "dependency-track-apiserver.dependency-track"
+      apiKey: ""
+
+    trivy:
+      ## Enable trivy scanner, if true make sure to add it to scannerList above.
+      ## To guarentee reliable scans, also ensure that the trivy analyzer is enabled.
+      ##
+      enabled: true
+      timeout: "300"
+
+
+## End of KubeClarity Runtime Scan Values
+#######################################################################################
+
+#######################################################################################
+## KubeClarity Grype Server Values
+
+  kubeclarity-grype-server:
+    enabled: true
+
+## End of KubeClarity Grype Server Values
+#######################################################################################
+
+#######################################################################################
+## KubeClarity Trivy Server Values
+## https://github.com/aquasecurity/trivy/blob/main/helm/trivy/values.yaml
+
+  kubeclarity-trivy-server:
+    enabled: true
+## End of KubeClarity Trivy Server Values
+#######################################################################################
+
+
+#######################################################################################
+## KubeClarity Internal Postgres Values
+## Use kubeclarity-postgresql if you want this chart to deploy a PostgreSQL instance
+  kubeclarity-postgresql:
+    enabled: true
+    fullnameOverride: "scanyourkube-scanyourkube-kubeclarity-postgresql"
+
+# End of KubeClarity Internal Postgres Values
+#######################################################################################
+
+  # Use kubeclarity-postgresql-external if you want to reach an already existing PostgreSQL instance
+  kubeclarity-postgresql-external:
+    enabled: false
+    auth:
+      existingSecret: kubeclarity-postgresql-secret
+      username: kubeclarity
+      host: pgsql.hostname  # replace this to reach your PostgreSQL instance
+      port: 5432
+      database: kubeclarity
+
+  # PostgreSQL connection information
+  kubeclarity-postgresql-secret:
+    # Set create to true if you want this helm chart to create a secret holding pgsql password
+    # based on global.databasePassword value
+    # If create is set to false, a secret should already exist which has PostgreSQL
+    # password under secretKey key
+    create: true
+    secretKey: "postgres-password"
+
+cert-manager: #defined by either the name or alias of your dependency in Chart.yaml
+  enabled: true
+  installCRDs: false
