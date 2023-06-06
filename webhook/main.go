@@ -93,7 +93,7 @@ func ServeMutate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Info("Mutated %s", in.Kind)
+	log.Infof("Mutated %s", in.Kind)
 
 	w.Header().Set("Content-Type", "application/json")
 	jout, err := json.Marshal(out)
