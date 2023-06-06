@@ -154,7 +154,7 @@ scanyourkubewebhook:
     reinvocationPolicy: IfNeeded
     sideEffects: None
     matchPolicy: Equivalent
-    name: keel-webhook.zhaw.ch
+    name: keel-webhook.scanyourkube.io
     rules:
       - apiGroups: ["apps"]
         apiVersions:
