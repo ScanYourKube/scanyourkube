@@ -1,0 +1,31 @@
+name: Go-Docker
+
+on:
+  push:
+    tags: 
+    - "*" 
+
+  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:      
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v4.0.0
+      with:
+        # List of target platforms for build
+        platforms: linux/amd64
+        # Push is a shorthand for --output=type=registry
+        push: true
+        # List of tags
+        tags: ghcr.io/scanyourkube/scanyourkube-cronjob:${{  github.ref_name }}
+        # Sets the target stage to build
+        target: run
+        file: Dockerfile.cronjob

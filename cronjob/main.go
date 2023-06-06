@@ -4,8 +4,9 @@ import (
 	"fmt"
 
 	"os"
-	wire "scanyourkube-management-service/di"
 	"strings"
+
+	wire "github.com/scanyourkube/cronjob/di"
 
 	log "github.com/sirupsen/logrus"
 )

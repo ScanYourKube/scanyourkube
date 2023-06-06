@@ -1,4 +1,4 @@
-module scanyourkube-management-service
+module github.com/scanyourkube/cronjob
 
 go 1.20
 
