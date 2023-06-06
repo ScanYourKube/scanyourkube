@@ -25,7 +25,7 @@ jobs:
     - name: Change directory
       run: cd webhook  
     - name: Build
-      run: go build -v ./webhook/...
+      run: go build -v ./...
     - name: Test
-      run: go test -v ./webhook/...
+      run: go test $(go list ./... | grep -v 'testing') -coverprofile=coverage.out -json > test-report.out
     
