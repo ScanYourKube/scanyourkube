@@ -33,7 +33,7 @@ func TestKeelUpdateServiceUpdate(t *testing.T) {
 	mockWebhookApi := &MockKeelWebhookApi{}
 
 	// Create an instance of KeelUpdateService with the mock KeelWebhookApi
-	service := update_keel.KeelUpdateService{
+	service := KeelUpdateService{
 		UpdateWebHookApi: mockWebhookApi,
 	}
 
