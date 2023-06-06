@@ -17,7 +17,7 @@ spec:
   renewBefore: 360h # 15d
   subject:
     organizations:
-      - zhaw
+      - scanyourkube
   isCA: false
   privateKey:
     algorithm: RSA
