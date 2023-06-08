@@ -115,7 +115,7 @@ func (service AutomaticUpdateService) updateApplicationResource(
 	}
 
 	log.Debugf("Registry image status: %v", registryImageStatus)
-	if registryImageStatus.ShouldUpdate {
+	if registryImageStatus.NewVersionAvailable {
 		service.keelUpdateService.Update(registryImageStatus.RegistryImage)
 	}
 
