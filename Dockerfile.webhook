@@ -9,13 +9,13 @@ ENV CGO_ENABLED=0
 WORKDIR /work
 COPY webhook .
 
-# Build admission-webhook
+# Build scanyourkube-webhook
 RUN --mount=type=cache,target=/root/.cache/go-build,sharing=private \
-  go build -o bin/keel-webhook .
+  go build -o bin/scanyourkube-webhook .
 
 # ---
 FROM scratch AS run
 
-COPY --from=build /work/bin/keel-webhook /usr/local/bin/
+COPY --from=build /work/bin/scanyourkube-webhook /usr/local/bin/
 
-CMD ["keel-webhook"]
+CMD ["scanyourkube-webhook"]
