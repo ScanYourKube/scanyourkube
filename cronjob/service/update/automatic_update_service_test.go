@@ -21,7 +21,7 @@ func attackVector(attackVector dto_service_resource.AttackVector) *dto_service_r
 	return &attackVector
 }
 
-func TestAutomaticUpdateService_StartAutomaticUpdate(t *testing.T) {
+func TestAutomaticUpdateServiceStartAutomaticUpdate(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -121,7 +121,7 @@ func TestAutomaticUpdateService_StartAutomaticUpdate(t *testing.T) {
 
 }
 
-func TestAutomaticUpdateService_updateApplicationResourceAndNotifyOwner(t *testing.T) {
+func TestAutomaticUpdateServiceUpdateApplicationResourceAndNotifyOwner(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -140,23 +140,25 @@ func TestAutomaticUpdateService_updateApplicationResourceAndNotifyOwner(t *testi
 	)
 
 	// Call the method being tested
-	err := service.updateApplicationResourceAndNotifyOwner(dto_service_resource.Application{}, dto_service_resource.ApplicationResource{
-		ResourceName: "trittale/trittale-nginx:latest",
-		ResourceHash: "6c3e2af067405c14b199902b7541d6534b0bcf471f76565408327c67c723b6f5",
-		Vulnerabilities: map[string]dto_service_resource.Vulnerability{
-			"id": {
-				CvssSeverity: vul(dto_service_resource.CRITICAL),
-				AttackVector: attackVector(dto_service_resource.NETWORK),
-				FixVersion:   "1.0.0",
+	err := service.updateApplicationResourceAndNotifyOwner(
+		dto_service_resource.Application{},
+		dto_service_resource.ApplicationResource{
+			ResourceName: "trittale/trittale-nginx:latest",
+			ResourceHash: "6c3e2af067405c14b199902b7541d6534b0bcf471f76565408327c67c723b6f5",
+			Vulnerabilities: map[string]dto_service_resource.Vulnerability{
+				"id": {
+					CvssSeverity: vul(dto_service_resource.CRITICAL),
+					AttackVector: attackVector(dto_service_resource.NETWORK),
+					FixVersion:   "1.0.0",
+				},
 			},
-		},
-	})
+		})
 
 	// Assert the result
 	assert.NoError(t, err)
 }
 
-func TestAutomaticUpdateService_updateApplicationResource(t *testing.T) {
+func TestAutomaticUpdateServiceUpdateApplicationResource(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -190,7 +192,7 @@ func TestAutomaticUpdateService_updateApplicationResource(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestAutomaticUpdateService_sendNotificationToApplicationOwner(t *testing.T) {
+func TestAutomaticUpdateServiceSendNotificationToApplicationOwner(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -198,7 +200,10 @@ func TestAutomaticUpdateService_sendNotificationToApplicationOwner(t *testing.T)
 	mockNotificationService := mock_service_notification.NewMockIEmailNotificationService(ctrl)
 
 	// Set up expectations for the mocked dependencies
-	mockKubernetesResourceService.EXPECT().GetOwnerEmailAddressesByPodLabels(gomock.Any(), gomock.Any()).Return("dummy@dummy.com", nil).Times(1)
+	mockKubernetesResourceService.EXPECT().GetOwnerEmailAddressesByPodLabels(
+		gomock.Any(),
+		gomock.Any(),
+	).Return("dummy@dummy.com", nil).Times(1)
 	mockNotificationService.EXPECT().SendEmail(gomock.Any()).Return(nil).Times(1)
 
 	// Create an instance of AutomaticUpdateService with mocked dependencies
@@ -220,7 +225,7 @@ func TestAutomaticUpdateService_sendNotificationToApplicationOwner(t *testing.T)
 		VulnerabilityName:        "CVE-2020-1234",
 		VulnerabilityDescription: "This is a description",
 		NewVersion:               "1.0.0",
-		ShouldUpdate:             true,
+		NewVersionAvailable:      true,
 	})
 
 	// Assert the result
