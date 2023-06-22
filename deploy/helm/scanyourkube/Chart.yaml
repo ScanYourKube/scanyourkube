@@ -30,7 +30,7 @@ maintainers:
     url: https://github.com/ScanYourKube/scanyourkube
 dependencies:
   - name: kubeclarity
-    version: "v2.18.0"
+    version: "v2.19.0"
     repository: https://openclarity.github.io/kubeclarity
     condition: scanyourkube-kubeclarity.enabled
     alias: scanyourkube-kubeclarity
