@@ -7,7 +7,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.4
 	github.com/wI2L/jsondiff v0.4.0
-	k8s.io/api v0.26.2
+	k8s.io/api v0.27.3
 	k8s.io/apimachinery v0.27.3
 )
 
