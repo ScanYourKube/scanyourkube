@@ -10,10 +10,10 @@ require (
 	github.com/leanovate/gopter v0.2.9
 	github.com/mocktools/go-smtp-mock/v2 v2.0.5
 	github.com/rancher/rancher/pkg/client v0.0.0-20230519212245-c50b4ec30e36
-	github.com/stretchr/testify v1.8.4
 	github.com/sirupsen/logrus v1.9.3
+	github.com/stretchr/testify v1.8.4
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
-	k8s.io/api v0.27.2
+	k8s.io/api v0.27.3
 	k8s.io/apimachinery v0.27.3
 	k8s.io/client-go v0.27.2
 	k8s.io/utils v0.0.0-20230505201702-9f6742963106
