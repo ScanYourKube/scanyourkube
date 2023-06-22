@@ -1,12 +1,12 @@
 dependencies:
 - name: kubeclarity
   repository: https://openclarity.github.io/kubeclarity
-  version: v2.18.0
+  version: v2.19.0
 - name: keel
   repository: https://charts.keel.sh
   version: 1.0.2
 - name: cert-manager
   repository: https://charts.jetstack.io
   version: v1.11.1
-digest: sha256:213616556c6f5d1b6a63e322eab998dbcbb8169de213b2321357c7ea7b7f1407
-generated: "2023-05-16T13:34:01.943574209Z"
+digest: sha256:4ef22071352fe984b0c5cf0d9436f48e4e721fa96375c4d59cc855c096649216
+generated: "2023-06-22T07:30:19.8100391Z"
