@@ -73,8 +73,12 @@ func (service AutomaticUpdateService) StartAutomaticUpdate() error {
 	return nil
 }
 
-func (service AutomaticUpdateService) updateApplicationResourceAndNotifyOwner(application dto_service_resource.Application, applicationResource dto_service_resource.ApplicationResource) error {
-	if triggeringVulnerability, shouldUpdate := service.shouldApplicationResourceUpdate(applicationResource); shouldUpdate {
+func (service AutomaticUpdateService) updateApplicationResourceAndNotifyOwner(
+	application dto_service_resource.Application,
+	applicationResource dto_service_resource.ApplicationResource,
+) error {
+	if triggeringVulnerability,
+		shouldUpdate := service.shouldApplicationResourceUpdate(applicationResource); shouldUpdate {
 		registryImageStatus, err := service.updateApplicationResource(applicationResource)
 		if err != nil {
 			return err
@@ -86,7 +90,7 @@ func (service AutomaticUpdateService) updateApplicationResourceAndNotifyOwner(ap
 			triggeringVulnerability.VulnerabilityName,
 			triggeringVulnerability.Description,
 			registryImageStatus.RegistryImage.Tag,
-			shouldUpdate,
+			registryImageStatus.NewVersionAvailable,
 		)
 		err = service.sendNotificationToApplicationOwner(application, emailNotification)
 		if err != nil {
@@ -96,7 +100,8 @@ func (service AutomaticUpdateService) updateApplicationResourceAndNotifyOwner(ap
 	return nil
 }
 
-func (service AutomaticUpdateService) updateApplicationResource(applicationResource dto_service_resource.ApplicationResource) (registry_image.ImageRegistryStatus, error) {
+func (service AutomaticUpdateService) updateApplicationResource(
+	applicationResource dto_service_resource.ApplicationResource) (registry_image.ImageRegistryStatus, error) {
 	updateImage := dto_service_update.UpdateServiceImageDto{
 		Id:           applicationResource.Id,
 		ResourceName: applicationResource.ResourceName,
@@ -110,7 +115,7 @@ func (service AutomaticUpdateService) updateApplicationResource(applicationResou
 	}
 
 	log.Debugf("Registry image status: %v", registryImageStatus)
-	if registryImageStatus.ShouldUpdate {
+	if registryImageStatus.NewVersionAvailable {
 		service.keelUpdateService.Update(registryImageStatus.RegistryImage)
 	}
 

@@ -15,8 +15,8 @@ import (
 )
 
 type ImageRegistryStatus struct {
-	RegistryImage RegistryImage
-	ShouldUpdate  bool
+	RegistryImage       RegistryImage
+	NewVersionAvailable bool
 }
 
 type RegistryImage struct {
@@ -30,15 +30,15 @@ func GetImageRegistryStatus(updateImage dto_service_update.UpdateServiceImageDto
 		log.Error(err)
 		return ImageRegistryStatus{}, err
 	}
-	shouldUpdate, err := CompareCurrentDigestWithNewVersion(updateImage, registryImage.Tag)
+	newVersionAvailable, err := CompareCurrentDigestWithNewVersion(updateImage, registryImage.Tag)
 	if err != nil {
 		log.Error(err)
 		return ImageRegistryStatus{}, err
 	}
 
 	return ImageRegistryStatus{
-		RegistryImage: *registryImage,
-		ShouldUpdate:  *shouldUpdate,
+		RegistryImage:       *registryImage,
+		NewVersionAvailable: *newVersionAvailable,
 	}, nil
 }
 
