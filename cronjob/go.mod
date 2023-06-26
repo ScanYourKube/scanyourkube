@@ -8,7 +8,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/google/go-containerregistry v0.15.2
 	github.com/leanovate/gopter v0.2.9
-	github.com/mocktools/go-smtp-mock/v2 v2.0.5
+	github.com/mocktools/go-smtp-mock/v2 v2.1.0
 	github.com/rancher/rancher/pkg/client v0.0.0-20230519212245-c50b4ec30e36
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.4
