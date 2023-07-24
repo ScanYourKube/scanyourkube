@@ -8,7 +8,7 @@ require (
 	github.com/stretchr/testify v1.8.4
 	github.com/wI2L/jsondiff v0.4.0
 	k8s.io/api v0.27.3
-	k8s.io/apimachinery v0.27.3
+	k8s.io/apimachinery v0.27.4
 )
 
 require (
