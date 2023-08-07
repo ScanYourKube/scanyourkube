@@ -6,7 +6,7 @@ require (
 	github.com/Masterminds/semver v1.5.0
 	github.com/docker/distribution v2.8.2+incompatible
 	github.com/golang/mock v1.6.0
-	github.com/google/go-containerregistry v0.15.2
+	github.com/google/go-containerregistry v0.16.1
 	github.com/leanovate/gopter v0.2.9
 	github.com/mocktools/go-smtp-mock/v2 v2.1.0
 	github.com/rancher/rancher/pkg/client v0.0.0-20230519212245-c50b4ec30e36
